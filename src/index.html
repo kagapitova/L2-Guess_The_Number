@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess The Number</title>
+    <link rel="stylesheet" href="assets/styles/styles.css">
+</head>
+<body>
+<div></div>
+<h1 id="game__header">Guess The Number</h1>
+<div id="game__container">
+    <div class="top__container">
+        <div class="side-bar__info">
+            <div>
+                <div class="game__tablo">Move: <span id="game__score">0</span></div>
+                <p class="game__info">For Start - set interval.</p>
+                <p class="game__info">Follow the clues and guess the number.</p>
+            </div>
+        </div>
+        <div class="playfield__container">
+            <div>
+                <div class="set-interval">
+                    <label for="from" class="from__header"> From:</label>
+                    <input type="number" class="from" id="from" value=0>
+                    <label for="to" class="from__header"> To:</label>
+                    <input type="number" class="to" id="to" value=100>
+                    <button type="submit" class="set-interval__btn">Set interval</button>
+                </div>
+                <div>
+                    <input type="number" class="answer">
+                    <button type="submit" class="answer__btn">Check the num</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p class="clues"></p>
+    <p class="results"></p>
+</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
