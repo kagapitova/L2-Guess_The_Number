@@ -160,7 +160,6 @@ function renderMoves(){
 	console.log(statments.mavesToGlue)
 }
 
-
 function resetStatments(){
 	statments.mavesToGlue = 0;
 	statments.allMoves = 0;
