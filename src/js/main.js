@@ -8,7 +8,7 @@ import {
 	winCheat,
 	winNormal,
 	winHard,
-	delay, noValue, newGame
+	delay, noValue, newGame, penalty
 } from './statments.js'; // импортируем состояния
 
 
@@ -68,6 +68,13 @@ function checkRes() {
 		setTimeout(
 			function() {
 				removeResText()
+			}, statments.time
+		);
+	} else if (answer.value > statments.numTo || answer.value < statments.numFrom){
+		print_clues(penalty, gluePlace, delay);
+		setTimeout(
+			function() {
+				removeGlueText()
 			}, statments.time
 		);
 	} else if (answer.value > statments.hiddenNum){
