@@ -11,10 +11,10 @@ export const newGame = 'For a new game set new interval.';
 
 export const penalty = 'Check the INTERVALS, PLEASE!';
 
-export const delay = 100;
+export const delay = 50;
 
 export const statments = {
-	mavesToGlue: 0,
+	movesToClue: 0,
 	allMoves: 0,
 	numFrom: 0,
 	numTo: 0,
