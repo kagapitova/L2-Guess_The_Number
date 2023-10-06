@@ -13,4 +13,4 @@ https://kagapitova.github.io/L2-Guess_The_Number/src/
 - `JS`.
 
 ## deadline - 11.10.2023 
-## ready - 01.10.2023
+## ready - 06.10.2023
