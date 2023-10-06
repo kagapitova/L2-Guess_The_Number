@@ -12,7 +12,7 @@ import {
 } from './statments.js'; // импортируем состояния
 
 
-const gluePlace = document.querySelector(".clues");
+const cluePlace = document.querySelector(".clues");
 const resPlace = document.querySelector(".results");
 const setBtn = document.querySelector('.set-interval__btn');
 const inputFrom = document.querySelector('.from');
@@ -24,6 +24,7 @@ const answer = document.querySelector('.answer');
 const print_clues = function(text, elem, delay) {
 	if(text.length > 0) {
 		elem.innerHTML += text[0];
+		disabledAll();
 		setTimeout(
 			function() {
 				print_clues(text.slice(1), elem, delay);
@@ -32,26 +33,31 @@ const print_clues = function(text, elem, delay) {
 	}
 }
 
-function removeGlueText() {
-	gluePlace.textContent = '';
+function removeClueText() {
+	cluePlace.textContent = '';
 }
 function removeResText() {
 	resPlace.textContent = '';
 }
 
 setBtn.addEventListener('click',()=>{
-	setInterval()
+	setInterval();
+	statments.allMoves = 0;
+	moves.innerText = 0;
 });
 
 function setInterval(){
 	statments.numFrom = parseInt(inputFrom.value);
 	statments.numTo = parseInt(inputTo.value);
-	statments.hiddenNum = Math.floor(Math.random() * (statments.numTo - statments.numFrom)) + statments.numFrom;
+	statments.hiddenNum = Math.floor(Math.random() * (statments.numTo - statments.numFrom + 1)) + statments.numFrom;
 	console.log(statments.hiddenNum)
-	print_clues(start, gluePlace, delay);
+	console.log(statments.numTo);
+	console.log(statments.numFrom);
+	print_clues(start, cluePlace, delay);
 	setTimeout(
 		function() {
-			removeGlueText()
+			removeClueText();
+			enabledAll();
 		}, statments.time
 	);
 }
@@ -68,73 +74,91 @@ function checkRes() {
 		setTimeout(
 			function() {
 				removeResText()
+				enabledAll();
 			}, statments.time
 		);
+		enabledAll();
 	} else if (answer.value > statments.numTo || answer.value < statments.numFrom){
-		print_clues(penalty, gluePlace, delay);
+		console.log(statments.numTo);
+		console.log(statments.numFrom);
+		print_clues(penalty, cluePlace, delay);
 		setTimeout(
 			function() {
-				removeGlueText()
+				removeClueText()
+				enabledAll();
 			}, statments.time
 		);
+		enabledAll();
 	} else if (answer.value > statments.hiddenNum){
 		print_clues(failDown, resPlace, delay);
 		setTimeout(
 			function() {
 				removeResText()
+				enabledAll();
 			}, statments.time
 		);
+		enabledAll();
 	} else if (answer.value < statments.hiddenNum){
 		print_clues(failUp, resPlace, delay);
 		setTimeout(
 			function() {
 				removeResText()
+				enabledAll();
 			}, statments.time
 		);
+		enabledAll();
 	} else if (parseInt(answer.value) === parseInt(statments.hiddenNum)){
 			if(statments.allMoves === 1){
 				print_clues(winCheat, resPlace, delay);
 				setTimeout(
 					function() {
 						removeResText()
+						enabledAll();
 					}, statments.time
 				);
-				print_clues(newGame, gluePlace, delay);
+				print_clues(newGame, cluePlace, delay);
 				setTimeout(
 					function() {
-						removeGlueText()
+						removeClueText()
+						enabledAll();
 					}, statments.time
 				);
+				enabledAll();
 				resetStatments()
 			} else if (statments.allMoves > 1 && statments.allMoves <= 10){
 				print_clues(winNormal, resPlace, delay);
 				setTimeout(
 					function() {
 						removeResText()
+						enabledAll();
 					}, statments.bigTime
 				);
-				print_clues(newGame, gluePlace, delay);
+				print_clues(newGame, cluePlace, delay);
 				setTimeout(
 					function() {
-						removeGlueText()
-						
+						removeClueText()
+						enabledAll();
 					}, statments.bigTime
 				);
 				resetStatments()
+				enabledAll();
 			} else if (statments.allMoves > 10){
 				print_clues(winHard, resPlace, delay);
 				setTimeout(
 					function() {
 						removeResText()
+						enabledAll();
 					}, statments.bigTime
 				);
-				print_clues(newGame, gluePlace, delay);
+				print_clues(newGame, cluePlace, delay);
 				setTimeout(
 					function() {
-						removeGlueText()
+						removeClueText()
+						enabledAll();
 					}, statments.time
 				);
 				resetStatments()
+				enabledAll();
 			}
 	}
 }
@@ -142,33 +166,59 @@ function checkRes() {
 function renderMoves(){
 	statments.allMoves += 1;
 	moves.innerText = statments.allMoves;
-	if(statments.mavesToGlue < 2){
-		statments.mavesToGlue += 1;
+	if(statments.movesToClue < 2){
+		statments.movesToClue += 1;
 	} else {
 		if(statments.hiddenNum % 2 === 0){
-			print_clues(glueEven, gluePlace, delay);
+			print_clues(glueEven, cluePlace, delay);
 			setTimeout(
 				function() {
-					removeGlueText()
+					removeClueText()
 				}, statments.time
 			);
-			statments.mavesToGlue = 0;
+			statments.movesToClue = 0;
 		} else {
-			print_clues(glueOdd, gluePlace, delay);
+			print_clues(glueOdd, cluePlace, delay);
 			setTimeout(
 				function() {
-					removeGlueText()
+					removeClueText()
 				}, statments.time
 			);
-			statments.mavesToGlue = 0;
+			statments.movesToClue = 0;
 		}
 	}
 	console.log(statments.allMoves)
-	console.log(statments.mavesToGlue)
+	console.log(statments.movesToClue)
 }
 
+function disableSetNumBtn(){
+	setBtn.disabled = true;
+}
+
+function disableCheckNumBtn(){
+	checkBtn.disabled = true;
+}
+
+function disabledAll(){
+	disableSetNumBtn();
+	disableCheckNumBtn();
+}
+
+
+function enableSetNumBtn(){
+	setBtn.disabled = false;
+}
+
+function enableCheckNumBtn(){
+	checkBtn.disabled = false;
+}
+
+function enabledAll(){
+	enableCheckNumBtn();
+	enableSetNumBtn();
+}
 function resetStatments(){
-	statments.mavesToGlue = 0;
+	statments.movesToClue = 0;
 	statments.allMoves = 0;
 	statments.numFrom = 0;
 	statments.numTo = 0;
