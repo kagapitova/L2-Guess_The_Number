@@ -8,7 +8,7 @@ import {
 	winCheat,
 	winNormal,
 	winHard,
-	delay, noValue, newGame, penalty
+	delay, noValue, newGame, penalty, setHiddenNum
 } from './statments.js'; // импортируем состояния
 
 
@@ -22,14 +22,22 @@ const moves = document.getElementById('game__score');
 const answer = document.querySelector('.answer');
 
 const print_clues = function(text, elem, delay) {
+	const isClueElem = elem.classList.contains('clues');
+	isClueElem
+		? clearInterval(statments.timeouts.clue)
+		: clearInterval(statments.timeouts.res);
+	
 	if(text.length > 0) {
 		elem.innerHTML += text[0];
-		disabledAll();
-		setTimeout(
+		const timeoutId = setTimeout(
 			function() {
 				print_clues(text.slice(1), elem, delay);
 			}, delay
 		);
+		
+		isClueElem
+			? statments.timeouts.clue = timeoutId
+			: statments.timeouts.res = timeoutId;
 	}
 }
 
@@ -40,26 +48,24 @@ function removeResText() {
 	resPlace.textContent = '';
 }
 
+function removeTexts() {
+	removeClueText();
+	removeResText();
+}
+
 setBtn.addEventListener('click',()=>{
+	resetStatments();
 	setInterval();
 	statments.allMoves = 0;
 	moves.innerText = 0;
 });
 
-function setInterval(){
+function setInterval() {
+	removeTexts();
 	statments.numFrom = parseInt(inputFrom.value);
 	statments.numTo = parseInt(inputTo.value);
-	statments.hiddenNum = Math.floor(Math.random() * (statments.numTo - statments.numFrom + 1)) + statments.numFrom;
-	console.log(statments.hiddenNum)
-	console.log(statments.numTo);
-	console.log(statments.numFrom);
+	setHiddenNum();
 	print_clues(start, cluePlace, delay);
-	setTimeout(
-		function() {
-			removeClueText();
-			enabledAll();
-		}, statments.time
-	);
 }
 
 checkBtn.addEventListener('click',()=>{
@@ -69,101 +75,34 @@ checkBtn.addEventListener('click',()=>{
 });
 
 function checkRes() {
+	removeTexts();
 	if(!answer.value){
 		print_clues(noValue, resPlace, delay);
-		setTimeout(
-			function() {
-				removeResText()
-				enabledAll();
-			}, statments.time
-		);
-		enabledAll();
 	} else if (answer.value > statments.numTo || answer.value < statments.numFrom){
-		console.log(statments.numTo);
-		console.log(statments.numFrom);
 		print_clues(penalty, cluePlace, delay);
-		setTimeout(
-			function() {
-				removeClueText()
-				enabledAll();
-			}, statments.time
-		);
-		enabledAll();
 	} else if (answer.value > statments.hiddenNum){
 		print_clues(failDown, resPlace, delay);
-		setTimeout(
-			function() {
-				removeResText()
-				enabledAll();
-			}, statments.time
-		);
-		enabledAll();
 	} else if (answer.value < statments.hiddenNum){
 		print_clues(failUp, resPlace, delay);
-		setTimeout(
-			function() {
-				removeResText()
-				enabledAll();
-			}, statments.time
-		);
-		enabledAll();
 	} else if (parseInt(answer.value) === parseInt(statments.hiddenNum)){
 			if(statments.allMoves === 1){
 				print_clues(winCheat, resPlace, delay);
-				setTimeout(
-					function() {
-						removeResText()
-						enabledAll();
-					}, statments.time
-				);
 				print_clues(newGame, cluePlace, delay);
-				setTimeout(
-					function() {
-						removeClueText()
-						enabledAll();
-					}, statments.time
-				);
-				enabledAll();
 				resetStatments()
 			} else if (statments.allMoves > 1 && statments.allMoves <= 10){
 				print_clues(winNormal, resPlace, delay);
-				setTimeout(
-					function() {
-						removeResText()
-						enabledAll();
-					}, statments.bigTime
-				);
 				print_clues(newGame, cluePlace, delay);
-				setTimeout(
-					function() {
-						removeClueText()
-						enabledAll();
-					}, statments.bigTime
-				);
 				resetStatments()
-				enabledAll();
 			} else if (statments.allMoves > 10){
 				print_clues(winHard, resPlace, delay);
-				setTimeout(
-					function() {
-						removeResText()
-						enabledAll();
-					}, statments.bigTime
-				);
 				print_clues(newGame, cluePlace, delay);
-				setTimeout(
-					function() {
-						removeClueText()
-						enabledAll();
-					}, statments.time
-				);
 				resetStatments()
-				enabledAll();
 			}
 	}
 }
 
-function renderMoves(){
+function renderMoves() {
+	removeTexts();
 	statments.allMoves += 1;
 	moves.innerText = statments.allMoves;
 	if(statments.movesToClue < 2){
@@ -171,52 +110,14 @@ function renderMoves(){
 	} else {
 		if(statments.hiddenNum % 2 === 0){
 			print_clues(glueEven, cluePlace, delay);
-			setTimeout(
-				function() {
-					removeClueText()
-				}, statments.time
-			);
 			statments.movesToClue = 0;
 		} else {
 			print_clues(glueOdd, cluePlace, delay);
-			setTimeout(
-				function() {
-					removeClueText()
-				}, statments.time
-			);
 			statments.movesToClue = 0;
 		}
 	}
-	console.log(statments.allMoves)
-	console.log(statments.movesToClue)
 }
 
-function disableSetNumBtn(){
-	setBtn.disabled = true;
-}
-
-function disableCheckNumBtn(){
-	checkBtn.disabled = true;
-}
-
-function disabledAll(){
-	disableSetNumBtn();
-	disableCheckNumBtn();
-}
-
-
-function enableSetNumBtn(){
-	setBtn.disabled = false;
-}
-
-function enableCheckNumBtn(){
-	checkBtn.disabled = false;
-}
-
-function enabledAll(){
-	enableCheckNumBtn();
-	enableSetNumBtn();
-}
 function resetStatments(){
 	statments.movesToClue = 0;
 	statments.allMoves = 0;
@@ -225,3 +126,5 @@ function resetStatments(){
 	statments.hiddenNum = 0;
 	statments.currentNum = 0;
 }
+
+setInterval();
